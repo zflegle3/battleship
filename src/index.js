@@ -235,10 +235,13 @@ const domInteract = {
     populateBoard: function(playerIn) {
         //select board based on player that comes in to append to
         let gameboardDiv;
+        let playerId = "";
         if (playerIn === "computer") {
             gameboardDiv = document.getElementById("comp-board");
+            playerId = "co";
         } else {
             gameboardDiv = document.getElementById("player1-board");
+            playerId = "p1";
         }
 
         //for i 0-10 j 0-10
@@ -248,7 +251,7 @@ const domInteract = {
         for (let i=1; i<=10;i++) {
             for (let j=1; j<=10; j++) {
                 let squareDiv = document.createElement("div");
-                squareDiv.id = `${i}-${j}`;
+                squareDiv.id = `${playerId}-${i}-${j}`;
                 squareDiv.classList = "game-square"
                 gameboardDiv.appendChild(squareDiv)
             }

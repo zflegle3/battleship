@@ -44,8 +44,44 @@ table {
 }
 
 /* Main Document Styles */
+/* Main Styled Font */
 @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
 /* font-family: 'Kdam Thmor Pro', sans-serif; */
+/* Sub Font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+/* font-family: 'Montserrat', sans-serif; */
+
+* {
+--display-width: 25rem;
+--piece-hp-width: 0.8rem;
+
+--light-blue1: #A5D8FF;
+--light-blue2: #14FFF7;
+--dark-blue1: #0081A7;
+--dark-blue2: #0BC9CD;
+--dark-blue3: #1D8A99;
+--dark-blue4: #577590;
+--grey-ship1: #7C7C7C;
+--grey-ship2: #B2B2B2;
+--grey-ship3: #C3BABA;
+--green-good1: #7DCD85;
+--green-good2: #C9F299;
+
+--green-radar1: #ADE25D;
+--green-radar2: #99C24D;
+--green-radar3: #5CF64A;
+
+--sand1: #FCDEBE;
+--sand2: #EED7C5;
+
+--red-bad1: #A71D31;
+--red-bad2: #A71D31;
+--orange1: #F7B267;
+--orange2: #F79D65;
+--orange3: #F4845F;
+
+}
+
 
 body {
     width: 100%;
@@ -88,6 +124,14 @@ body {
 
 /* Header Styles */
 
+#comms h1 {
+    font-size: 2.5rem;
+    padding: 1rem;
+    margin: 1rem;
+    border: 0.1rem solid var(--grey-ship1);
+    border-radius: .4rem;
+}
+
 #player-in {
     display: flex;
     flex-direction: column;
@@ -98,9 +142,22 @@ body {
     visibility: hidden;
 }
 
+#player-in input {
+    font-family: 'Montserrat', sans-serif;
+}
 
-/* Gameplay Styles */
+#player-in button {
+    font-family: 'Montserrat', sans-serif;
+}
 
+#player-in button:hover {
+    background-color: ;
+}
+
+
+/* Gameboard Styles */
+
+/* Name Display */
 .player-name {
 }
 
@@ -109,20 +166,101 @@ body {
     padding: 1rem 1rem 1rem 1rem;
 }
 
+/* Gameboard */
 .gameboard {
-    width: 25rem;
-    height: 25rem;
+    width: var(--display-width);
+    height: var(--display-width);
     display: grid;
     grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(10,1fr);
-    grid-gap: .2rem;
+    grid-gap: .1rem;
 }
 
 .game-square {
-    border: 1px solid rgb(0,0,0);
-    background-color: rgb(72, 201, 234);
+    /* border: 1px solid var(--green-radar3); */
+    background-color: var(--light-blue2);
+    /* background-color: rgb(0,0,0); */
 }
 
 .game-square:hover {
-    background-color: rgb(72, 167, 234);
+    background-color: var(--dark-blue2);
+    /* background-color: rgb(70, 70, 70); */
+}
+
+.game-square:active {
+    background-color: var(--orange2);
+}
+
+
+/* Game Pieces Styles - Non Player or Piece specific */
+
+div[id*="pieces"] {
+    width: var(--display-width);
+    display: flex;
+    justify-content: center;
+
+}
+
+div[id*="pieces"] > div {
+    /* ships */
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    Margin: 0.5rem;
+}
+
+div[id*="pieces"] > div > div {
+    /* ship hp */
+    display: flex;
+    justify-content: center;
+}
+
+div[id*="hp-0"] {
+    /* ship hp detail */
+    display: flex;
+    justify-content: center;
+    background-color: var(--green-good1);
+    height: var(--piece-hp-width);
+    width: var(--piece-hp-width);
+    margin: 0 0.1rem 0.25rem 0.1rem;
+    /* border: 1px solid rgb(0,0,0); */
+
+}
+
+div[id*="pieces"] > div > p {
+    /* ship label */
+    font-size: --piece-hp-width;
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+
+
+
+
+
+/* Mock Styles */
+#carrier-p1-hp-03, #carrier-p1-hp-04, #carrier-p1-hp-05 {
+    background-color: var(--red-bad1);
+}
+
+#cruiser-co-hp-03 {
+    background-color: var(--red-bad1);
+}
+
+#co-4-3, #co-5-2, #co-6-2, #co-7-2, #co-7-3, #co-7-4, #co-6-5, #co-5-5, #co-4-4, #co-5-3{
+    background-color: var(--sand1);
+}
+
+#co-6-3, #co-6-4, #co-5-4{
+    background-color: var(--green-radar2);
+}
+
+#co-9-2, #co-9-3, #co-9-4, #co-9-4, #co-2-2, #co-3-2, #co-3-5, #co-3-6, #co-3-7, #co-3-8{
+    background-color: var(--grey-ship1);
+}
+
+#co-9-4 {
+    background-color: var(--red-bad2);
 }
