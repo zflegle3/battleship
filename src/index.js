@@ -1,6 +1,6 @@
 
-// import "./style.css"
-// console.log("hello");
+import "./style.css"
+console.log("hello");
 
 function createShip(lenIn,xIn,yIn,dirIn) {
     let positionArr = [];
@@ -185,30 +185,82 @@ function playerNew(name) {
 }
 
 const gamePlay = {
-    playersAll: [],
-    newShips: [],
-    newGame: function() {
+    playersAll: [], //[computer, player1]
+    newShipSizes: [5,4,3,3,2],
+    startGame: function() {
+        domInteract.populateBoard("computer");
+        domInteract.populateBoard("Player 1");
+    },
+    gameLoop: function() {
         //Create players
         let player1Name = "Steve" // Update with Prompt in from user
         playersAll[0] = playerNew("computer");
         playersAll[1] = playerNew(`${player1Name}`);
+
+        //Computer Places ships
+        this.playersAll[0].gameBoard.placeShip(newShipSizes[0],"1,1","x");
+        this.playersAll[0].gameBoard.placeShip(newShipSizes[1],"1,2","y");
+        this.playersAll[0].gameBoard.placeShip(newShipSizes[2],"2,2","y");
+        this.playersAll[0].gameBoard.placeShip(newShipSizes[3],"3,2","y");
+        this.playersAll[0].gameBoard.placeShip(newShipSizes[4],"2,5","x");
+        //Player 1 places ships 
+        this.playersAll[1].gameBoard.placeShip(newShipSizes[0],"1,1","x");
+        this.playersAll[1].gameBoard.placeShip(newShipSizes[1],"1,2","y");
+        this.playersAll[1].gameBoard.placeShip(newShipSizes[2],"2,2","y");
+        this.playersAll[1].gameBoard.placeShip(newShipSizes[3],"3,2","y");
+        this.playersAll[1].gameBoard.placeShip(newShipSizes[4],"2,5","x");
+
         //place computer ships
         //place player 1 ships
         //add event listeners to board squares 
+
+        //Create Players
+        //Place Ship, randomly for now
+
+        //Alternate attacks
+        //Continue while ships not all sunk 
+
+
+        //End game and 
+
+
+
+
     }
 
 
 }
 
 const domInteract = {
-    
+    populateBoard: function(playerIn) {
+        //select board based on player that comes in to append to
+        let gameboardDiv;
+        if (playerIn === "computer") {
+            gameboardDiv = document.getElementById("comp-board");
+        } else {
+            gameboardDiv = document.getElementById("player1-board");
+        }
 
+        //for i 0-10 j 0-10
+        //create div
+        //add attributes, class & ID
+        //append divs to player's board 
+        for (let i=1; i<=10;i++) {
+            for (let j=1; j<=10; j++) {
+                let squareDiv = document.createElement("div");
+                squareDiv.id = `${i}-${j}`;
+                squareDiv.classList = "game-square"
+                gameboardDiv.appendChild(squareDiv)
+            }
+        }
+
+    }   
 }
 
 
 
 
-
+gamePlay.startGame();
 
 //Debugging Cases
 
@@ -224,14 +276,8 @@ const domInteract = {
 // playerComp.attack(player1);
 
 
-
-
-
-
-
-
-
-module.exports = {createShip, gameBoard, playerNew};
+//Testing Exports
+// module.exports = {createShip, gameBoard, playerNew};
 
 
 

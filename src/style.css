@@ -1,3 +1,128 @@
+/* CSS Reset http://meyerweb.com/eric/tools/css/reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 10px;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
 body {
-    background-color: red;
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* Main Document Styles */
+@import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
+/* font-family: 'Kdam Thmor Pro', sans-serif; */
+
+body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Kdam Thmor Pro', sans-serif;
+}
+
+#header {
+    height: 20vh;
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#gamedisplay {
+    width: 100%;
+    height: 80vh;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    grid-gap: 2rem;
+    padding: 1rem;
+}
+
+#gamedisplay > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+}
+
+#player1-game {
+    grid-area: 1/1/2/2;
+}
+
+#comp-game {
+    grid-area: 1/2/2/3;
+}
+
+/* Header Styles */
+
+#player-in {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#player-in.hidden {
+    visibility: hidden;
+}
+
+
+/* Gameplay Styles */
+
+.player-name {
+}
+
+.player-name h2 {
+    font-size: 2rem;
+    padding: 1rem 1rem 1rem 1rem;
+}
+
+.gameboard {
+    width: 25rem;
+    height: 25rem;
+    display: grid;
+    grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(10,1fr);
+    grid-gap: .2rem;
+}
+
+.game-square {
+    border: 1px solid rgb(0,0,0);
+    background-color: rgb(72, 201, 234);
+}
+
+.game-square:hover {
+    background-color: rgb(72, 167, 234);
 }
