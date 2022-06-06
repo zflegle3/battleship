@@ -109,6 +109,17 @@ function gameBoard() {
             }
             return attackResponse;
         },
+        checkLocationValid: function(xIndex,yIndex,currentDirection,shipLength) {
+            if (currentDirection === "x" && (xIndex+shipLength-1) > 10) {
+                console.log("Error, move ship left, or change direction");
+                return "error"; //Update with Error Handling 
+            } else if (currentDirection === "y" && (yIndex+shipLength-1) > 10) {
+                console.log("Error, move ship up, or change direction");
+                return "error"; //Update with Error Handling 
+            } else {
+                return "valid";
+            }
+        },
         placeShip: function(shipLength,indexStart,direction) {
             //eventually will expect index to come in as a click event (e.target.id = "x,y")
             //expectiing direction as string "x" or "y"
@@ -186,16 +197,53 @@ function playerNew(name) {
 
 const gamePlay = {
     playersAll: [], //[computer, player1]
-    newShipSizes: [5,4,3,3,2],
-    startGame: function() {
+    shipSizes: [5,4,3,3,2],
+    shipDirection: "x",
+    setupGame: function() {
+        //populate board for both sides
         domInteract.populateBoard("computer");
         domInteract.populateBoard("Player 1");
+        //select form element and add event listener
+        let playerInForm = document.getElementById("player-in");
+        playerInForm.addEventListener("submit",gamePlay.shipPlacement);
     },
+
+    shipPlacement: function(e) {
+        e.preventDefault();
+        //Update Player Name value and display
+        let player1Name =domInteract.nameIn();
+        //create players
+        gamePlay.playersAll.push(playerNew("computer"));
+        gamePlay.playersAll.push(playerNew(`${player1Name}`));
+        console.log(gamePlay.playersAll);
+        // this.playersAll[1] = playerNew(`${player1Name}`);
+        //add Event Listeners to place ships
+        let playerSquares = document.querySelectorAll("#player1-board .game-square");
+        playerSquares.forEach(square => square.addEventListener("mouseover",domInteract.showLocation));
+        playerSquares.forEach(square => square.addEventListener("click",domInteract.placeShips));
+        let dirToggleBtn = document.getElementById("direction-tog-btn");
+        dirToggleBtn.classList.toggle("hidden");
+        dirToggleBtn.addEventListener("click",gamePlay.toggleDirection)
+
+        // for (let square in playerSquares) {
+        //     square.addEventListener("click",domInteract.placeShips);
+        // }
+
+
+        //Place Ships Player 1
+        //add event listener on all player 1 squares to call dom place function
+
+
+
+    },
+
+
+
     gameLoop: function() {
         //Create players
         let player1Name = "Steve" // Update with Prompt in from user
-        playersAll[0] = playerNew("computer");
-        playersAll[1] = playerNew(`${player1Name}`);
+        this.playersAll[0] = playerNew("computer");
+        this.playersAll[1] = playerNew(`${player1Name}`);
 
         //Computer Places ships
         this.playersAll[0].gameBoard.placeShip(newShipSizes[0],"1,1","x");
@@ -209,24 +257,16 @@ const gamePlay = {
         this.playersAll[1].gameBoard.placeShip(newShipSizes[2],"2,2","y");
         this.playersAll[1].gameBoard.placeShip(newShipSizes[3],"3,2","y");
         this.playersAll[1].gameBoard.placeShip(newShipSizes[4],"2,5","x");
-
-        //place computer ships
-        //place player 1 ships
-        //add event listeners to board squares 
-
-        //Create Players
-        //Place Ship, randomly for now
-
-        //Alternate attacks
-        //Continue while ships not all sunk 
-
-
-        //End game and 
-
-
-
-
+    },
+    toggleDirection: function() {
+        if (gamePlay.shipDirection === "x") {
+            gamePlay.shipDirection = "y";
+        } else {
+            gamePlay.shipDirection = "x"; 
+        }
+        domInteract.toggleDirectionDisplay();
     }
+
 
 
 }
@@ -256,14 +296,75 @@ const domInteract = {
                 gameboardDiv.appendChild(squareDiv)
             }
         }
-
-    }   
+    },
+    nameIn: function() {
+        let formInput = document.querySelectorAll('input[type=text]')[0];
+        let playerName  = formInput.value.trim();
+        if (playerName.length > 0) {
+            let playerNameDiv = document.querySelector("#player1-name h2"); 
+            playerNameDiv.innerHTML = playerName;      
+        } else {
+            playerName = "Player1";
+        }
+        formInput.parentElement.reset();
+        formInput.parentElement.classList = "hidden";
+        return playerName;
+    },
+    placeShips: function(e) {
+        //check player ships number to determine which ship to place 
+        console.log(e.target);
+    },
+    showLocation: function(e) {
+        //check player ships number to determine which ship to place 
+        console.log(gamePlay.playersAll[1].board.shipsAll.length);
+        //pull ship length based on ships placed
+        //use ship length & current direction to determine squares to display
+        let shipIndex = gamePlay.playersAll[1].board.shipsAll.length;
+        console.log(shipIndex);
+        let currentLength = gamePlay.shipSizes[shipIndex];
+        //get square location info
+        let squareId = e.target.id;
+        let indices = squareId.split("-");
+        let plIndex = indices[0]; //keeping in case need this function for computer placements too
+        let xIndex = Number(indices[2]);
+        let yIndex = Number(indices[1]);
+        let validReport = gamePlay.playersAll[1].board.checkLocationValid(xIndex,yIndex,gamePlay.shipDirection,currentLength);
+        console.log("valid?",validReport);
+        //unhighlight any cells aready highlighted 
+        domInteract.hideLocation("valid");
+        domInteract.hideLocation("error");
+        //highlight selected ship placement based on valid status 
+        for (let i=0;i<currentLength;i++) {
+            if (gamePlay.shipDirection === "x") {
+                if(xIndex+i < 11) {
+                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`)
+                    highlightLocation.classList.toggle(validReport);
+                }
+            } else {
+                if(yIndex+i < 11) {
+                    console.log(`${plIndex}-${yIndex+i}-${xIndex}`);
+                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`)
+                    highlightLocation.classList.toggle(validReport);
+                }
+            }
+        }
+    },
+    hideLocation: function(classToHide) {
+        let divsToHide = document.querySelectorAll(`.${classToHide}`);
+        if (divsToHide.length > 0) {
+            divsToHide.forEach(squareHighlighted => squareHighlighted.classList.toggle(`${classToHide}`));
+        }
+    },
+    toggleDirectionDisplay: function() {
+        let text = gamePlay.shipDirection.toUpperCase();
+        document.getElementById("direction-tog-btn").innerHTML = `${text} Direction`;
+    }
 }
 
 
 
 
-gamePlay.startGame();
+gamePlay.setupGame();
 
 //Debugging Cases
 

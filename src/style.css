@@ -72,14 +72,16 @@ table {
 --green-radar3: #5CF64A;
 
 --sand1: #FCDEBE;
---sand2: #EED7C5;
+--sand2: #F3DE8A;
 
 --red-bad1: #A71D31;
---red-bad2: #A71D31;
+--red-bad2: #f29999;
 --orange1: #F7B267;
 --orange2: #F79D65;
 --orange3: #F4845F;
 
+
+font-size: 10px;
 }
 
 
@@ -95,7 +97,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
 #gamedisplay {
@@ -140,18 +141,55 @@ body {
 
 #player-in.hidden {
     visibility: hidden;
+    height: 0;
 }
 
 #player-in input {
     font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    padding: 0.3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid var(--grey-ship1);
+    border-radius: 0.3rem;
 }
 
 #player-in button {
     font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--grey-ship1);
+    border-radius: 0.3rem;
 }
 
 #player-in button:hover {
-    background-color: ;
+    background-color: var(--grey-ship3) ;
+}
+
+#player-in button:active {
+    background-color: var(--orange1) ;
+}
+
+#direction-tog-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--grey-ship1);
+    border-radius: 0.3rem;
+}
+
+#direction-tog-btn.hidden {
+    visibility: hidden;
+}
+
+#direction-tog-btn:hover {
+    background-color: var(--grey-ship3) ;
+}
+
+#direction-tog-btn:active {
+    background-color: var(--orange1) ;
 }
 
 
@@ -182,13 +220,22 @@ body {
     /* background-color: rgb(0,0,0); */
 }
 
-.game-square:hover {
+#comp-board .game-square:hover {
     background-color: var(--dark-blue2);
     /* background-color: rgb(70, 70, 70); */
 }
 
-.game-square:active {
+#comp-board .game-square:active {
     background-color: var(--orange2);
+}
+
+/* Ship Placement Styles */
+.game-square.error {
+    background-color: var(--red-bad2);
+}
+
+.game-square.valid {
+    background-color: var(--green-good2);
 }
 
 
@@ -239,7 +286,6 @@ div[id*="pieces"] > div > p {
 
 
 
-
 /* Mock Styles */
 #carrier-p1-hp-03, #carrier-p1-hp-04, #carrier-p1-hp-05 {
     background-color: var(--red-bad1);
@@ -249,8 +295,8 @@ div[id*="pieces"] > div > p {
     background-color: var(--red-bad1);
 }
 
-#co-4-3, #co-5-2, #co-6-2, #co-7-2, #co-7-3, #co-7-4, #co-6-5, #co-5-5, #co-4-4, #co-5-3{
-    background-color: var(--sand1);
+/* #co-4-3, #co-5-2, #co-6-2, #co-7-2, #co-7-3, #co-7-4, #co-6-5, #co-5-5, #co-4-4, #co-5-3{
+    background-color: var(--sand2);
 }
 
 #co-6-3, #co-6-4, #co-5-4{
@@ -263,4 +309,4 @@ div[id*="pieces"] > div > p {
 
 #co-9-4 {
     background-color: var(--red-bad2);
-}
+} */
