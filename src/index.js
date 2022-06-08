@@ -2,7 +2,11 @@
 import "./style.css"
 console.log("hello");
 
-function createShip(lenIn,xIn,yIn,dirIn) {
+
+// ~~~~~~~~~~~~~~~~~~~~~~~
+// SHIP FACTORY FUNCTION
+// ~~~~~~~~~~~~~~~~~~~~~~~
+function createShip(xIn,yIn,dirIn,lenIn,nameIn) {
     let positionArr = [];
     for (let i=0;i<lenIn;i++) {
         let shipSquare = {};
@@ -25,6 +29,7 @@ function createShip(lenIn,xIn,yIn,dirIn) {
     return {
         //Methods & properties from a ship
         _shipLength: lenIn,
+        shipType: nameIn,
         position: positionArr,//rename to somehting more fitting
         sunkYN: false,
         hit: function(shipIndex) {
@@ -61,6 +66,16 @@ function createShip(lenIn,xIn,yIn,dirIn) {
     }
 }
 
+
+
+
+
+
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~
+// BOARD FACTORY FUNCTION
+// ~~~~~~~~~~~~~~~~~~~~~~~
 function gameBoard() {
     return {
         //Methods & properties from a ship
@@ -74,9 +89,7 @@ function gameBoard() {
             let hitFlag = false; //only to check if was a hit on ship, not valid/invalid
             let missFlag = false; //set to true when attack not a hit or invalid
             let attackResponse = "";
-
             //Checks for Hit/Invalid Hit
-            console.log(this.shipsAll);
             for (let i=0; i<this.shipsAll.length; i++) { //for all ships
                 for (let j=0; j<this.shipsAll[i].position.length; j++) {  //for all spots on ship
                     //if hit index is on ship
@@ -109,35 +122,39 @@ function gameBoard() {
             }
             return attackResponse;
         },
-        checkLocationValid: function(xIndex,yIndex,currentDirection,shipLength) {
-            if (currentDirection === "x" && (xIndex+shipLength-1) > 10) {
-                console.log("Error, move ship left, or change direction");
-                return "error"; //Update with Error Handling 
-            } else if (currentDirection === "y" && (yIndex+shipLength-1) > 10) {
-                console.log("Error, move ship up, or change direction");
-                return "error"; //Update with Error Handling 
-            } else {
-                return "valid";
+
+        placeShip: function(plIndex,xIndex,yIndex,currentDirection,shipLength,shipName) {
+            let validCheck = gamePlay.checkLocationValid(plIndex,xIndex,yIndex,currentDirection,shipLength);
+            //DOUBLE CHECK WHY DO I VALID CHECK AGAIN??
+            switch (validCheck) {
+                case "error":
+                    console.log("Cant place ship here");
+                    break;
+                case "valid":
+                    let newShip = createShip(xIndex,yIndex,currentDirection,shipLength,shipName);
+                    this.shipsAll.push(newShip);
+                    domInteract.placeShipDom(plIndex,xIndex,yIndex,currentDirection,shipLength,shipName);
             }
         },
-        placeShip: function(shipLength,indexStart,direction) {
-            //eventually will expect index to come in as a click event (e.target.id = "x,y")
-            //expectiing direction as string "x" or "y"
-            //let indices = indexStart.split(","); // [Xpos,Ypos]
-            let indices = indexStart.split(",").map((string) => Number(string));
-            if (direction === "x" && (indices[0]+shipLength-1) > 10) {
-                this.shipsAll.push("Error"); //Update with Error Handling 
-                // console.log("Error, move ship left, or change direction");
-            } else if (direction === "y" && (indices[1]+shipLength-1) > 10) {
-                this.shipsAll.push("Error"); //Update with Error Handling 
-                // console.log("Error, move ship up, or change direction");
-            } else {
-                // console.log("placing ship");
-                let newShip = createShip(shipLength,indices[0],indices[1],direction);
-                this.shipsAll.push(newShip)
+
+        autoPlaceShipsAll: function() {
+            // this.placeShip("co",1,1,"x",5,"Test Ship");
+
+            let count = 0;
+            let directions = ["x","y"];
+            // while (count > 1) {
+            while (this.shipsAll.length < 5) {
+                let xIndex = Math.floor((Math.random() * 10) + 1);
+                let yIndex = Math.floor((Math.random() * 10) + 1);
+                let randDirInt = Math.round(Math.random());
+                let randDirection = directions[randDirInt];
+                let shipLength = gamePlay.shipSizes[this.shipsAll.length];
+                let shipName = gamePlay.shipNames[this.shipsAll.length];
+                console.log("creating ship",shipName);
+                this.placeShip("co",xIndex,yIndex,randDirection,shipLength,shipName);
             }
         },
-        allSunk: function() {
+        allSunk: function () {
             let sunkCount = 0;
             for(let i=0; i<this.shipsAll.length; i++) {
                 if (this.shipsAll[0].isSunk())
@@ -153,6 +170,15 @@ function gameBoard() {
 }
 
 
+
+
+
+
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~
+// PLAYER FACTORY FUNCTION
+// ~~~~~~~~~~~~~~~~~~~~~~~
 function playerNew(name) {
     if (name === "computer") {
         return {
@@ -195,68 +221,52 @@ function playerNew(name) {
     }
 }
 
+
+
+
+
+
+
+
+// ~~~~~~~~~~~~~~~~~~~~~
+// GAMEPLAY LOGIC MODULE
+// ~~~~~~~~~~~~~~~~~~~~~
 const gamePlay = {
     playersAll: [], //[computer, player1]
     shipSizes: [5,4,3,3,2],
+    shipNames: ["carrier","battleship","cruiser","submarine","destroyer"],
     shipDirection: "x",
-    setupGame: function() {
+    init: function() {
         //populate board for both sides
         domInteract.populateBoard("computer");
         domInteract.populateBoard("Player 1");
         //select form element and add event listener
         let playerInForm = document.getElementById("player-in");
-        playerInForm.addEventListener("submit",gamePlay.shipPlacement);
+        playerInForm.addEventListener("submit",domInteract.nameIn);
     },
 
-    shipPlacement: function(e) {
-        e.preventDefault();
-        //Update Player Name value and display
-        let player1Name =domInteract.nameIn();
-        //create players
-        gamePlay.playersAll.push(playerNew("computer"));
-        gamePlay.playersAll.push(playerNew(`${player1Name}`));
-        console.log(gamePlay.playersAll);
-        // this.playersAll[1] = playerNew(`${player1Name}`);
-        //add Event Listeners to place ships
-        let playerSquares = document.querySelectorAll("#player1-board .game-square");
-        playerSquares.forEach(square => square.addEventListener("mouseover",domInteract.showLocation));
-        playerSquares.forEach(square => square.addEventListener("click",domInteract.placeShips));
-        let dirToggleBtn = document.getElementById("direction-tog-btn");
-        dirToggleBtn.classList.toggle("hidden");
-        dirToggleBtn.addEventListener("click",gamePlay.toggleDirection)
-
-        // for (let square in playerSquares) {
-        //     square.addEventListener("click",domInteract.placeShips);
-        // }
-
-
-        //Place Ships Player 1
-        //add event listener on all player 1 squares to call dom place function
-
-
-
+    //Player 1 setup
+    setUpGame: function(player1Name) {
+        //Add players
+        this.playersAll.push(playerNew("computer"));
+        this.playersAll.push(playerNew(`${player1Name}`));
+        //add Event Listeners on p1 board squares to place ships
+        domInteract.domUiUpdate("placing-ships", "start");
     },
 
+    //Rest of Game Setup
+    checkAllShipsPlaces: function() {
+        if (this.playersAll[1].board.shipsAll.length === 5) {
+            //remove event listeners on player board
+            //hide direction button
+            domInteract.domUiUpdate("placing-ships", "stop");
+            //populate computer board
+            console.log("Starting Auto-Place");
+            gamePlay.playersAll[0].board.autoPlaceShipsAll();
 
-
-    gameLoop: function() {
-        //Create players
-        let player1Name = "Steve" // Update with Prompt in from user
-        this.playersAll[0] = playerNew("computer");
-        this.playersAll[1] = playerNew(`${player1Name}`);
-
-        //Computer Places ships
-        this.playersAll[0].gameBoard.placeShip(newShipSizes[0],"1,1","x");
-        this.playersAll[0].gameBoard.placeShip(newShipSizes[1],"1,2","y");
-        this.playersAll[0].gameBoard.placeShip(newShipSizes[2],"2,2","y");
-        this.playersAll[0].gameBoard.placeShip(newShipSizes[3],"3,2","y");
-        this.playersAll[0].gameBoard.placeShip(newShipSizes[4],"2,5","x");
-        //Player 1 places ships 
-        this.playersAll[1].gameBoard.placeShip(newShipSizes[0],"1,1","x");
-        this.playersAll[1].gameBoard.placeShip(newShipSizes[1],"1,2","y");
-        this.playersAll[1].gameBoard.placeShip(newShipSizes[2],"2,2","y");
-        this.playersAll[1].gameBoard.placeShip(newShipSizes[3],"3,2","y");
-        this.playersAll[1].gameBoard.placeShip(newShipSizes[4],"2,5","x");
+            //add event listeners for attacking
+            //call switching turns function?
+        }
     },
     toggleDirection: function() {
         if (gamePlay.shipDirection === "x") {
@@ -265,12 +275,56 @@ const gamePlay = {
             gamePlay.shipDirection = "x"; 
         }
         domInteract.toggleDirectionDisplay();
+    },
+    checkLocationValid: function(plIndex,xIndex,yIndex,currentDirection,shipLength) {
+        let errorMsg = document.getElementById("placing-error");
+        if (currentDirection === "x" && (xIndex+shipLength-1) > 10) {
+            errorMsg.innerHTML = "Error, move ship left, or change direction";
+            return "error"; //Update with Error Handling 
+        } else if (currentDirection === "y" && (yIndex+shipLength-1) > 10) {
+            errorMsg.innerHTML = "Error, move ship up, or change direction";
+            return "error"; //Update with Error Handling 
+        } else if (!this.checkSpotTaken(plIndex,xIndex,yIndex,currentDirection,shipLength)) {
+            errorMsg.innerHTML = "Error, conflict with another ship";
+            return "error"; //Update with Error Handling 
+        } else {
+            if (errorMsg.innerHTML.length > 0) {
+                errorMsg.innerHTML = "";
+            }
+            return "valid";
+        }
+    },
+    checkSpotTaken: function(plIndex,xIndex,yIndex,currentDirection,shipLength) {
+        //uses classlist length of square to determine if a ship is already there
+        for (let i=0;i<shipLength;i++) {
+            if (currentDirection === "x") {
+                let checkedLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`);
+                if (checkedLocation.classList.length > 2) {
+                    return false
+                }
+            } else {
+                let checkedLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`);
+                if (checkedLocation.classList.length > 2) {
+                    return false
+                }
+            }
+        }
+        return true;
     }
-
-
-
 }
 
+
+
+
+
+
+
+
+
+
+// ~~~~~~~~~~~~~~~~~~~~~
+// DOM INTERACT MODULE
+// ~~~~~~~~~~~~~~~~~~~~~
 const domInteract = {
     populateBoard: function(playerIn) {
         //select board based on player that comes in to append to
@@ -283,11 +337,6 @@ const domInteract = {
             gameboardDiv = document.getElementById("player1-board");
             playerId = "p1";
         }
-
-        //for i 0-10 j 0-10
-        //create div
-        //add attributes, class & ID
-        //append divs to player's board 
         for (let i=1; i<=10;i++) {
             for (let j=1; j<=10; j++) {
                 let squareDiv = document.createElement("div");
@@ -297,7 +346,8 @@ const domInteract = {
             }
         }
     },
-    nameIn: function() {
+    nameIn: function(e) {
+        e.preventDefault();
         let formInput = document.querySelectorAll('input[type=text]')[0];
         let playerName  = formInput.value.trim();
         if (playerName.length > 0) {
@@ -308,42 +358,86 @@ const domInteract = {
         }
         formInput.parentElement.reset();
         formInput.parentElement.classList = "hidden";
-        return playerName;
+        gamePlay.setUpGame(playerName);
     },
-    placeShips: function(e) {
-        //check player ships number to determine which ship to place 
-        console.log(e.target);
+    domUiUpdate: function(reason,changeType) {
+        //updates UI interaction including event listeners, buttons, 
+        let caseIn = `${reason} ${changeType}`;
+        switch (caseIn) {
+            case "placing-ships start":
+                console.log ("on");
+                //player 1 board squares
+                let playerSquaresStart = document.querySelectorAll("#player1-board .game-square");
+                playerSquaresStart.forEach(square => square.addEventListener("mouseover",domInteract.locationData));
+                playerSquaresStart.forEach(square => square.addEventListener("click",domInteract.locationData));
+                //direction button
+                let dirToggleBtnStart = document.getElementById("direction-tog-btn");
+                dirToggleBtnStart.classList.toggle("hidden");
+                dirToggleBtnStart.addEventListener("click",gamePlay.toggleDirection);
+                break;
+            case "placing-ships stop":
+                console.log ("off");
+                let playerSquaresStop = document.querySelectorAll("#player1-board .game-square");
+                playerSquaresStop.forEach(square => square.removeEventListener("mouseover",domInteract.locationData));
+                playerSquaresStop.forEach(square => square.removeEventListener("click",domInteract.locationData));
+                let dirToggleBtnStop = document.getElementById("direction-tog-btn");
+                dirToggleBtnStop.classList.toggle("hidden");
+                dirToggleBtnStop.removeEventListener("click",gamePlay.toggleDirection);
+                break;
+        }
+
     },
-    showLocation: function(e) {
-        //check player ships number to determine which ship to place 
-        console.log(gamePlay.playersAll[1].board.shipsAll.length);
-        //pull ship length based on ships placed
-        //use ship length & current direction to determine squares to display
+    locationData: function(e) {
+        e.preventDefault();
+        let currentDirection = gamePlay.shipDirection;
+        //Current Ship Length being placed
         let shipIndex = gamePlay.playersAll[1].board.shipsAll.length;
-        console.log(shipIndex);
-        let currentLength = gamePlay.shipSizes[shipIndex];
-        //get square location info
+        let shipLength = gamePlay.shipSizes[shipIndex];
+        let shipName = gamePlay.shipNames[shipIndex];
+        //get event & square location info
+        let eventType = e.type;
         let squareId = e.target.id;
         let indices = squareId.split("-");
         let plIndex = indices[0]; //keeping in case need this function for computer placements too
         let xIndex = Number(indices[2]);
         let yIndex = Number(indices[1]);
-        let validReport = gamePlay.playersAll[1].board.checkLocationValid(xIndex,yIndex,gamePlay.shipDirection,currentLength);
-        console.log("valid?",validReport);
-        //unhighlight any cells aready highlighted 
+        if (eventType === "click") {
+            gamePlay.playersAll[1].board.placeShip(plIndex,xIndex,yIndex,currentDirection,shipLength,shipName);
+            if (gamePlay.playersAll[1].board.shipsAll.length === 5) {
+                gamePlay.checkAllShipsPlaces();
+            }
+        } else if (eventType === "mouseover") {
+            domInteract.showLocation(plIndex,xIndex,yIndex,currentDirection,shipLength);
+        }
+    },
+    placeShipDom: function(plIndex,xIndex,yIndex,currentDirection,shipLength,shipName) {
+        //updates squares class w/ ship info
+        for (let i=0;i<shipLength;i++) {
+            if (currentDirection === "x") {
+                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`);
+                    highlightLocation.classList = `game-square ship-active ${plIndex}-${shipName}`;
+            } else {
+                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`);
+                    highlightLocation.classList = `game-square ship-active ${plIndex}-${shipName}`;
+            }
+        }
+    },
+
+    showLocation: function(plIndex,xIndex,yIndex,currentDirection,shipLength) {
+        let validReport = gamePlay.checkLocationValid(plIndex,xIndex,yIndex,currentDirection,shipLength);
+        //Clear any cells aready highlighted 
         domInteract.hideLocation("valid");
         domInteract.hideLocation("error");
         //highlight selected ship placement based on valid status 
-        for (let i=0;i<currentLength;i++) {
-            if (gamePlay.shipDirection === "x") {
+        for (let i=0;i<shipLength;i++) {
+            if (currentDirection === "x") {
                 if(xIndex+i < 11) {
-                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`)
+                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`);
                     highlightLocation.classList.toggle(validReport);
                 }
             } else {
                 if(yIndex+i < 11) {
-                    console.log(`${plIndex}-${yIndex+i}-${xIndex}`);
-                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`)
+                    let highlightLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`);
                     highlightLocation.classList.toggle(validReport);
                 }
             }
@@ -361,10 +455,12 @@ const domInteract = {
     }
 }
 
+gamePlay.init();
 
 
 
-gamePlay.setupGame();
+
+
 
 //Debugging Cases
 
@@ -380,7 +476,7 @@ gamePlay.setupGame();
 // playerComp.attack(player1);
 
 
-//Testing Exports
+// // Testing Exports
 // module.exports = {createShip, gameBoard, playerNew};
 
 

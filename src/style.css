@@ -192,6 +192,14 @@ body {
     background-color: var(--orange1) ;
 }
 
+#placing-error {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    color: var(--red-bad1);
+}
+
+
+
 
 /* Gameboard Styles */
 
@@ -220,12 +228,12 @@ body {
     /* background-color: rgb(0,0,0); */
 }
 
-#comp-board .game-square:hover {
+#comp-board .game-square-playing:hover {
     background-color: var(--dark-blue2);
     /* background-color: rgb(70, 70, 70); */
 }
 
-#comp-board .game-square:active {
+#comp-board .game-square-playing:active {
     background-color: var(--orange2);
 }
 
@@ -236,6 +244,10 @@ body {
 
 .game-square.valid {
     background-color: var(--green-good2);
+}
+
+.game-square.ship-active {
+    background-color: var(--grey-ship1);
 }
 
 
@@ -277,7 +289,7 @@ div[id*="hp-0"] {
 
 div[id*="pieces"] > div > p {
     /* ship label */
-    font-size: --piece-hp-width;
+    font-size: var(--piece-hp-width);
     font-family: 'Montserrat', sans-serif;
 }
 
