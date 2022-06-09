@@ -16,6 +16,9 @@
             <input type="text" id="player-name" name="name" placeholder="Enter Name">
             <button>Start Game</button>
         </form>
+        <div id="ui-output">
+            <p id="ui-output-text" class="hidden"></p>
+        </div>
         <div id="direction-tog">
             <button id="direction-tog-btn" class="hidden">X Direction</button>
         </div>
@@ -35,7 +38,7 @@
             </div>
 
             <div id="player1-pieces">
-                <div id="carrier-p1">        
+                <div id="carrier-p1" class="hidden">        
                     <div id="carrrier-hp">
                         <div id="carrier-p1-hp-01"></div>
                         <div id="carrier-p1-hp-02"></div>
@@ -45,7 +48,7 @@
                     </div>
                     <p>Carrier</p>
                 </div>
-                <div id="battleship-p1">
+                <div id="battleship-p1" class="hidden">
                     <div id="battleship-p1-hp">
                         <div id="battleship-p1-hp-01"></div>
                         <div id="battleship-p1-hp-02"></div>
@@ -54,7 +57,7 @@
                     </div>
                     <p>Battleship</p>
                 </div>
-                <div id="cruiser-p1">
+                <div id="cruiser-p1" class="hidden">
                     <div id="cruiser-p1-hp">
                         <div id="cruiser-p1-hp-01"></div>
                         <div id="cruiser-p1-hp-02"></div>
@@ -62,7 +65,7 @@
                     </div>
                     <p>Cruiser</p>
                 </div>
-                <div id="submarine-p1">
+                <div id="submarine-p1" class="hidden">
                     <div id="submarine-p1-hp">
                         <div id="submarine-p1-hp-01"></div>
                         <div id="submarine-p1-hp-02"></div>
@@ -70,7 +73,7 @@
                     </div>
                     <p>Submarine</p>
                 </div>
-                <div id="destroyer-p1">
+                <div id="destroyer-p1" class="hidden">
                     <div id="destroyer-p1-hp">
                         <div id="destroyer-p1-hp-01"></div>
                         <div id="destroyer-p1-hp-02"></div>
@@ -90,7 +93,7 @@
             </div>
 
             <div id="comp-pieces">
-                <div id="carrier-co">        
+                <div id="carrier-co" class="hidden">        
                     <div id="carrier-co-hp">
                         <div id="carrier-co-hp-01"></div>
                         <div id="carrier-co-hp-02"></div>
@@ -100,7 +103,7 @@
                     </div>
                     <p>Carrier</p>
                 </div>
-                <div id="battleship-co">
+                <div id="battleship-co" class="hidden">
                     <div id="battleship-co-hp">
                         <div id="battleship-co-hp-01"></div>
                         <div id="battleship-co-hp-02"></div>
@@ -109,7 +112,7 @@
                     </div>
                     <p>Battleship</p>
                 </div>
-                <div id="cruiser-co">
+                <div id="cruiser-co" class="hidden">
                     <div id="cruiser-co-hp">
                         <div id="cruiser-co-hp-01"></div>
                         <div id="cruiser-co-hp-02"></div>
@@ -117,7 +120,7 @@
                     </div>
                     <p>Cruiser</p>
                 </div>
-                <div id="submarine-co">
+                <div id="submarine-co" class="hidden">
                     <div id="submarine-co-hp">
                         <div id="submarine-co-hp-01"></div>
                         <div id="submarine-co-hp-02"></div>
@@ -125,10 +128,10 @@
                     </div>
                     <p>Submarine</p>
                 </div>
-                <div id="destroyer">
-                    <div id="submarine-co-hp">
-                        <div id="submarine-co-hp-01"></div>
-                        <div id="submarine-co-hp-02"></div>
+                <div id="destroyer-co" class="hidden">
+                    <div id="destroyer-co-hp">
+                        <div id="destroyer-co-hp-01"></div>
+                        <div id="destroyer-co-hp-02"></div>
                     </div>
                         <p>Destroyer</p>
                 </div>

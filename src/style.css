@@ -43,7 +43,7 @@ table {
 	border-spacing: 0;
 }
 
-/* Main Document Styles */
+/* General Document Styles */
 /* Main Styled Font */
 @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
 /* font-family: 'Kdam Thmor Pro', sans-serif; */
@@ -80,10 +80,8 @@ table {
 --orange2: #F79D65;
 --orange3: #F4845F;
 
-
 font-size: 10px;
 }
-
 
 body {
     width: 100%;
@@ -91,6 +89,9 @@ body {
     font-family: 'Kdam Thmor Pro', sans-serif;
 }
 
+/* ~~~~~~~~~~~~~~~~~~
+ Main Document Styles
+~~~~~~~~~~~~~~~~~~~~~ */
 #header {
     height: 20vh;
     width:100%;
@@ -123,7 +124,9 @@ body {
     grid-area: 1/2/2/3;
 }
 
-/* Header Styles */
+/* ~~~~~~~~~~~~~~~~~~
+Header Document Styles
+~~~~~~~~~~~~~~~~~~~~~ */
 
 #comms h1 {
     font-size: 2.5rem;
@@ -169,6 +172,20 @@ body {
 
 #player-in button:active {
     background-color: var(--orange1) ;
+}
+
+#ui-output {
+
+}
+
+#ui-output-text {
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 1rem;
+}
+
+#ui-output-text.hidden {
+    visibility: hidden;
 }
 
 #direction-tog-btn {
@@ -229,13 +246,13 @@ body {
 }
 
 /* #comp-board .game-square-playing:hover { */
-#comp-board .game-square.none:hover {
+#comp-board .game-square:hover {
     background-color: var(--dark-blue2);
     background-color: rgb(70, 70, 70);
 }
 
 
-#comp-board .game-square.none-playing:active {
+#comp-board .game-square:active {
     background-color: var(--orange2);
 }
 
@@ -253,6 +270,10 @@ body {
 }
 
 .game-square.ship-active.hit {
+    background-color: var(--red-bad1);
+}
+
+.game-square.ship-hidden.hit {
     background-color: var(--red-bad1);
 }
 
@@ -279,6 +300,12 @@ div[id*="pieces"] > div {
     Margin: 0.5rem;
 }
 
+
+div[id*="pieces"] > div.hidden {
+    /* ships hidden */
+    visibility: hidden;
+}
+
 div[id*="pieces"] > div > div {
     /* ship hp */
     display: flex;
@@ -297,6 +324,12 @@ div[id*="hp-0"] {
 
 }
 
+div[id*="hp-0"].hit {
+    /* ship hp detail hit */
+    background-color: var(--red-bad1);
+
+}
+
 div[id*="pieces"] > div > p {
     /* ship label */
     font-size: var(--piece-hp-width);
@@ -308,14 +341,14 @@ div[id*="pieces"] > div > p {
 
 
 
-/* Mock Styles */
+/* Mock Styles
 #carrier-p1-hp-03, #carrier-p1-hp-04, #carrier-p1-hp-05 {
     background-color: var(--red-bad1);
 }
 
 #cruiser-co-hp-03 {
     background-color: var(--red-bad1);
-}
+} */
 
 /* #co-4-3, #co-5-2, #co-6-2, #co-7-2, #co-7-3, #co-7-4, #co-6-5, #co-5-5, #co-4-4, #co-5-3{
     background-color: var(--sand2);

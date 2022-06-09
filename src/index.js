@@ -12,12 +12,14 @@ function createShip(xIn,yIn,dirIn,lenIn,nameIn) {
         let shipSquare = {};
         if (dirIn === "x") {
             shipSquare = {
+                shipIndex: i+1,
                 posX: xIn + i,
                 posY: yIn,
                 hitStatus: false,
             }
         } else if (dirIn === "y") {
             shipSquare = {
+                shipIndex: i+1,
                 posX: xIn,
                 posY: yIn +i,
                 hitStatus: false, 
@@ -39,6 +41,7 @@ function createShip(xIn,yIn,dirIn,lenIn,nameIn) {
             } else {
                 // console.log("Hit!")
                 this.position[shipIndex].hitStatus = true;
+                // this.position[shipIndex].updateHitStatus(this.shipType);
                 return "hit";
             }
         },
@@ -128,6 +131,7 @@ function gameBoard() {
                     let newShip = createShip(xIndex,yIndex,currentDirection,shipLength,shipName);
                     this.shipsAll.push(newShip);
                     domInteract.placeShipDom(plIndex,xIndex,yIndex,currentDirection,shipLength,shipName);
+                    domInteract.showHp(shipName,plIndex);
             }
         },
 
@@ -254,62 +258,50 @@ const gamePlay = {
         this.playersAll.push(playerNew(`${player1Name}`));
         //add Event Listeners on p1 board squares to place ships
         domInteract.domUiUpdate("placing-ships", "start");
+        domInteract.uiTextUpdate(`${player1Name} place all of your ships on your board.`);
     },
 
     //Rest of Game Setup
     checkAllShipsPlaces: function() {
         if (this.playersAll[1].board.shipsAll.length === 5) {
-            //remove event listeners on player board
-            //hide direction button
+            //remove event listeners on player board & hide direction button
             domInteract.domUiUpdate("placing-ships", "stop");
             //populate computer board
-            console.log("Starting Auto-Place");
             gamePlay.playersAll[0].board.autoPlaceShipsAll();
-
             this.startTurn();
-            //call Start to game
-            //add event listeners for attacking
-            //call switching turns function?
         }
     },
     startTurn: function() {
         //Switch turn every time
         this._switchTurn(); //logging turn each time called
-        console.log(this.playersAll);
-
         //Check for sinking & intialize vars
-        console.log (this.playersAll[0].board.allSunk());
-        console.log (this.playersAll[1].board.allSunk());
-        let currentPlayer = this.playersAll[this.turn];
-        let p1Sunk = this.playersAll[0].board.allSunk();
+        let p1Sunk = this.playersAll[1].board.allSunk();
         let compSunk = this.playersAll[0].board.allSunk();
         //NEED TO UPDATE DOM ON INDIVIDUAL SHIP SINKING
-        console.log (!this.playersAll[0].board);
-        console.log (!this.playersAll[1].board);
 
         if (p1Sunk || compSunk) { //if either player sunk end game
+            console.log("Game Over");
             if (compSunk) { //if p1 wins
                 console.log("Player 1 wins");
+                domInteract.uiTextUpdate(`${this.playersAll[1].name} Wins!`);
                 //end game with p1 as winner
             } else { //comp wins
-                //end game with comp as winner
                 console.log("Computer wins");
+                domInteract.uiTextUpdate(`Computer Wins!`);
             }
         } else {
             if (this.turn === 1) {
                 //player 1 turn
+                domInteract.uiTextUpdate(`${this.playersAll[this.turn].name}, it is your turn. Choose a square on your opponent's board to attack.`);
                 domInteract.domUiUpdate("player1-attack","start");
             } else {
                 //computer turn
                 domInteract.domUiUpdate("player1-attack","stop"); //need to finish in dom interact
-                // this.playersAll[0].attack();
+                domInteract.uiTextUpdate(`Computer's turn, player attacking...`);
                 setTimeout(this.playersAll[0].attack,2000);
             }
         }
     },
-
-
-
 
     _switchTurn: function() {
         if (this.turn === 0) {
@@ -476,12 +468,22 @@ const domInteract = {
     placeShipDom: function(plIndex,xIndex,yIndex,currentDirection,shipLength,shipName) {
         //updates squares class w/ ship info
         for (let i=0;i<shipLength;i++) {
-            if (currentDirection === "x") {
+            if (plIndex === "p1") {
+                if (currentDirection === "x") {
                     let highlightLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`);
                     highlightLocation.classList = `game-square ship-active ${plIndex}-${shipName}`;
-            } else {
+                } else {
                     let highlightLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`);
                     highlightLocation.classList = `game-square ship-active ${plIndex}-${shipName}`;
+                }
+            } else {
+                if (currentDirection === "x") {
+                        let highlightLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`);
+                        highlightLocation.classList = `game-square ship-hidden ${plIndex}-${shipName}`;
+                } else {
+                        let highlightLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`);
+                        highlightLocation.classList = `game-square ship-hidden ${plIndex}-${shipName}`;
+                }
             }
         }
     },
@@ -517,13 +519,49 @@ const domInteract = {
         document.getElementById("direction-tog-btn").innerHTML = `${text} Direction`;
     },
     addAttack: function(attackResult,xIn,yIn,plIndex) {
+        //Display of square hit
         let attackSquare = document.getElementById(`${plIndex}-${yIn}-${xIn}`);
-        console.log(attackSquare);
-        console.log(attackSquare.classList);
-        // let classesCurrent = attackSquare.classList;
-        // classesCurrent.push(attackResult);
         attackSquare.classList.add(attackResult);
         console.log(attackSquare.classList);
+        //HP Display of ship if hit
+        if (attackResult === "hit") {
+            let playerIndexNum = 1;
+            if (plIndex === "co") {
+                playerIndexNum = 0; 
+            }
+            let shipName = attackSquare.classList[2].split("-")[1];
+            let selectedShip = gamePlay.playersAll[playerIndexNum].board.shipsAll.filter(ship => {
+                return ship.shipType === shipName;
+            })
+            console.log(selectedShip[0].position.length);
+            let selectedShipIndex = 0;
+            for (let i=0; i<selectedShip[0].position.length; i++) {
+                console.log(selectedShip[0].position[i])
+                if (selectedShip[0].position[i].hitStatus) {
+                    selectedShipIndex++;
+                }
+            }
+            console.log(`${shipName}-${plIndex}-hp-0${selectedShipIndex}`);
+
+            let hpDivUpdating = document.getElementById(`${shipName}-${plIndex}-hp-0${selectedShipIndex}`);
+            console.log(hpDivUpdating);
+            hpDivUpdating.classList.add("hit");
+        }
+    },
+    showHp: function(shipName,plIndex) {
+        let shipHpDiv = document.getElementById(`${shipName}-${plIndex}`);
+        shipHpDiv.classList.toggle("hidden");
+    },
+    uiTextUpdate: function(textIn) {
+        let uiTextElement = document.getElementById("ui-output-text");
+        console.log(uiTextElement);
+        if (textIn === "clear" ) {
+            uiTextElement.innerHTML = "";
+            uiTextElement.classList = "hidden";
+        } else {
+            uiTextElement.innerHTML = textIn;
+            uiTextElement.classList = "";
+        }
     }
 }
 
