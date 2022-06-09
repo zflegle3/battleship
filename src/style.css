@@ -228,12 +228,14 @@ body {
     /* background-color: rgb(0,0,0); */
 }
 
-#comp-board .game-square-playing:hover {
+/* #comp-board .game-square-playing:hover { */
+#comp-board .game-square.none:hover {
     background-color: var(--dark-blue2);
-    /* background-color: rgb(70, 70, 70); */
+    background-color: rgb(70, 70, 70);
 }
 
-#comp-board .game-square-playing:active {
+
+#comp-board .game-square.none-playing:active {
     background-color: var(--orange2);
 }
 
@@ -248,6 +250,14 @@ body {
 
 .game-square.ship-active {
     background-color: var(--grey-ship1);
+}
+
+.game-square.ship-active.hit {
+    background-color: var(--red-bad1);
+}
+
+.game-square.miss {
+    background-color: var(--dark-blue3);
 }
 
 
