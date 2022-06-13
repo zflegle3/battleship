@@ -60,6 +60,16 @@ function createShip(xIn,yIn,dirIn,lenIn,nameIn) {
                 return this.sunkYN;
             }
         },
+        beenHit: function() {
+            let hitOut = false;
+            for (let i=0; i<this.position.length; i++) {
+                if (this.position[i].hitStatus) {
+                    console.log("Spot has been Hit!")
+                    hitOut = true;
+                }
+            }
+            return hitOut;
+        }
     }
 }
 
@@ -107,6 +117,11 @@ function gameBoard() {
                         break;
                     }
                 }
+                if ( atkX > 10 || atkX < 1 || atkY > 10 || atkY < 1) {
+                    console.log("Guess out of index");
+                    attackResponse = "invalid";
+                    missFlag = true;
+                }
             }
             //Checks for valid Miss (not selected)
             if (attackResponse.length < 1) {
@@ -147,7 +162,7 @@ function gameBoard() {
                 let randDirection = directions[randDirInt];
                 let shipLength = gamePlay.shipSizes[this.shipsAll.length];
                 let shipName = gamePlay.shipNames[this.shipsAll.length];
-                console.log("creating ship",shipName);
+                // console.log("creating ship",shipName);
                 this.placeShip("co",xIndex,yIndex,randDirection,shipLength,shipName);
             }
         },
@@ -184,36 +199,94 @@ function playerNew(name) {
         return {
             name: "computer",
             board: gameBoard(),
-            attack: function() {
-                //eventually will expect index to come in as a click event (e.target.id = "x,y")
+            smartHits: [],
+            autoAttack: function() {
+                //check opponents ships 
+                let guessX = 0;
+                let guessY = 0;
+                let allOppShips = gamePlay.playersAll[1].board.shipsAll;
+                //if some ships hit but not sunk
+                let attackingShips =  allOppShips.filter(ship => ship.beenHit() === true && ship.isSunk() === false);
                 let attackStop = false;
                 while (!attackStop) {
-                    let randX = Math.floor((Math.random() * 10)+1);
-                    let randY = Math.floor((Math.random() * 10)+1);
-                    let attackResult = gamePlay.playersAll[1].board.recieveAttack(randX,randY)
-                    console.log(`Computer attack result at x:${randX} y:${randY}`,attackResult);
-                    if (attackResult === "hit" || attackResult === "miss")  {
-                        attackStop = true;
-                        domInteract.addAttack(attackResult,randX,randY,"p1");
-                        gamePlay.startTurn();
+                    //check first ship thats not sunk but has been hit
+                    if (attackingShips.length > 0) {
+                        let selectedShip = attackingShips[0];
+                        let hitsAll = selectedShip.position.filter(square => square.hitStatus === true)
+                        let randArr = [-1,1];
+                        let randFactor = randArr[Math.floor(Math.random()*2)];
+                        let randFactorB = randArr[Math.floor(Math.random()*2)];
+                        //pull first hit
+                        let hitFirst = hitsAll[0];
+                        //if more than 1 hit guess based on axis
+                        if (hitsAll.length > 1) {
+                            //pull last hit
+                            let hitLast = hitsAll[hitsAll.length-1];
+                            //check hit axis
+                            if (hitFirst.posX === hitLast.posX) {
+                                //y axis is correct
+                                if (randFactor > 0) {
+                                    guessY = hitLast.posY + 1;
+                                } else {
+                                    guessY = hitFirst.posY - 1;
+                                }
+                                guessX = hitFirst.posX;
+                            } else if (hitFirst.posY === hitLast.posY) {
+                                //x axis is correct
+                                if (randFactor > 0) {
+                                    guessX = hitLast.posX + 1;
+                                } else {
+                                    guessX = hitFirst.posX - 1;
+                                }
+                                guessY = hitFirst.posY;
+                            }
+                            console.log("Axis Guess At:",guessX, guessY);
+                        } else {
+                            //if only one hit 
+                            //check one of the 4 squares randomly, continues while invalud 
+                            if (randFactorB > 0) {
+                                guessY = hitFirst.posY;
+                                guessX = hitFirst.posX + randFactor;
+                            } else {
+                                guessY = hitFirst.posY + randFactor;
+                                guessX = hitFirst.posX;
+                            }
+                            console.log("Educated Guess At:",guessX, guessY);
+                        }
+                        let attackResult = gamePlay.playersAll[1].board.recieveAttack(guessX,guessY);
+                        // attackStop = true;
+                        if (attackResult === "hit" || attackResult === "miss") {
+                            domInteract.addAttack(attackResult,guessX,guessY,"p1");
+                            attackStop = true;
+                        }
+                    } else {
+                    //if all hit are sunk
+                        let randX = Math.floor((Math.random() * 10)+1);
+                        let randY = Math.floor((Math.random() * 10)+1);
+                        let attackResult = gamePlay.playersAll[1].board.recieveAttack(randX,randY)
+                        console.log(`Random Computer attack result at x:${randX} y:${randY}`,attackResult);
+                        if (attackResult === "hit" || attackResult === "miss")  {
+                            if (attackResult === "hit") {
+                                let hitElement = document.getElementById(`p1-${randY}-${randX}`);
+                                let shipNameHit = hitElement.classList[2].split("-")[1];
+                                gamePlay.playersAll[0].smartHits.push({xPos: randX, yPos: randY, shipName: shipNameHit});
+                            }
+                            attackStop = true;
+                            domInteract.addAttack(attackResult,randX,randY,"p1");
+                        }
                     }
                 }
-            },
+                gamePlay.startTurn();
+            }
         }
     } else {
         return {
             name: name,
             board: gameBoard(),
             attack: function(e) {
-                // e.preventDefault(); //needed??
-                console.log(e.target);
-                //handle event in
                 let attackIn = e.target.id.split("-");
                 let xAtk = Number(attackIn[2]);
                 let yAtk = Number(attackIn[1]);
-                // console.log("x",xAtk,"y",yAtk);
-
-                //attack board 
                 //if successful call next player turn 
                 let attackResult = gamePlay.playersAll[0].board.recieveAttack(xAtk,yAtk);
                 console.log("P1 attack resulted in:",attackResult);
@@ -224,6 +297,7 @@ function playerNew(name) {
             },
         }
     }
+
 }
 
 
@@ -272,6 +346,8 @@ const gamePlay = {
         }
     },
     startTurn: function() {
+        console.log(this.playersAll[0]);
+        console.log(this.playersAll[1]);
         //Switch turn every time
         this._switchTurn(); //logging turn each time called
         //Check for sinking & intialize vars
@@ -298,7 +374,7 @@ const gamePlay = {
                 //computer turn
                 domInteract.domUiUpdate("player1-attack","stop"); //need to finish in dom interact
                 domInteract.uiTextUpdate(`Computer's turn, player attacking...`);
-                setTimeout(this.playersAll[0].attack,2000);
+                setTimeout(this.playersAll[0].autoAttack,2000);
             }
         }
     },
@@ -309,7 +385,7 @@ const gamePlay = {
         } else {
             this.turn = 0;
         }
-        console.log(this.turn);
+        // console.log(this.turn);
     },
 
     toggleDirection: function() {
@@ -340,20 +416,21 @@ const gamePlay = {
     },
     checkSpotTaken: function(plIndex,xIndex,yIndex,currentDirection,shipLength) {
         //uses classlist length of square to determine if a ship is already there
+        let errorCheck = true;
         for (let i=0;i<shipLength;i++) {
             if (currentDirection === "x") {
                 let checkedLocation = document.getElementById(`${plIndex}-${yIndex}-${xIndex+i}`);
-                if (checkedLocation.classList.contains("ship-active")) {
-                    return false
+                if (checkedLocation.classList.contains("ship-active") || checkedLocation.classList.contains("ship-hidden")) {
+                    errorCheck = false;
                 }
             } else {
                 let checkedLocation = document.getElementById(`${plIndex}-${yIndex+i}-${xIndex}`);
-                if (checkedLocation.classList.contains("ship-active")) {
-                    return false
+                if (checkedLocation.classList.contains("ship-active") || checkedLocation.classList.contains("ship-hidden")) {
+                    errorCheck = false;
                 }
             }
         }
-        return true;
+        return errorCheck;
     }
 }
 
@@ -409,7 +486,7 @@ const domInteract = {
         let caseIn = `${reason} ${changeType}`;
         switch (caseIn) {
             case "placing-ships start":
-                console.log ("on");
+                // console.log ("on");
                 //player 1 board squares
                 let playerSquaresStart = document.querySelectorAll("#player1-board .game-square");
                 playerSquaresStart.forEach(square => square.addEventListener("mouseover",domInteract.locationData));
@@ -420,7 +497,7 @@ const domInteract = {
                 dirToggleBtnStart.addEventListener("click",gamePlay.toggleDirection);
                 break;
             case "placing-ships stop":
-                console.log ("off");
+                // console.log ("off");
                 let playerSquaresStop = document.querySelectorAll("#player1-board .game-square");
                 playerSquaresStop.forEach(square => square.removeEventListener("mouseover",domInteract.locationData));
                 playerSquaresStop.forEach(square => square.removeEventListener("click",domInteract.locationData));
@@ -522,7 +599,7 @@ const domInteract = {
         //Display of square hit
         let attackSquare = document.getElementById(`${plIndex}-${yIn}-${xIn}`);
         attackSquare.classList.add(attackResult);
-        console.log(attackSquare.classList);
+        // console.log(attackSquare.classList);
         //HP Display of ship if hit
         if (attackResult === "hit") {
             let playerIndexNum = 1;
@@ -533,18 +610,18 @@ const domInteract = {
             let selectedShip = gamePlay.playersAll[playerIndexNum].board.shipsAll.filter(ship => {
                 return ship.shipType === shipName;
             })
-            console.log(selectedShip[0].position.length);
+            // console.log(selectedShip[0].position.length);
             let selectedShipIndex = 0;
             for (let i=0; i<selectedShip[0].position.length; i++) {
-                console.log(selectedShip[0].position[i])
+                // console.log(selectedShip[0].position[i])
                 if (selectedShip[0].position[i].hitStatus) {
                     selectedShipIndex++;
                 }
             }
-            console.log(`${shipName}-${plIndex}-hp-0${selectedShipIndex}`);
+            // console.log(`${shipName}-${plIndex}-hp-0${selectedShipIndex}`);
 
             let hpDivUpdating = document.getElementById(`${shipName}-${plIndex}-hp-0${selectedShipIndex}`);
-            console.log(hpDivUpdating);
+            // console.log(hpDivUpdating);
             hpDivUpdating.classList.add("hit");
         }
     },
@@ -554,7 +631,7 @@ const domInteract = {
     },
     uiTextUpdate: function(textIn) {
         let uiTextElement = document.getElementById("ui-output-text");
-        console.log(uiTextElement);
+        // console.log(uiTextElement);
         if (textIn === "clear" ) {
             uiTextElement.innerHTML = "";
             uiTextElement.classList = "hidden";
