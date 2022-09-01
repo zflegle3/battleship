@@ -1,6 +1,5 @@
 
 import "./style.css"
-console.log("hello");
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,17 +30,14 @@ function createShip(xIn,yIn,dirIn,lenIn,nameIn) {
     return {
         _shipLength: lenIn,
         shipType: nameIn,
-        position: positionArr,//rename to somehting more fitting
+        position: positionArr,
         sunkYN: false,
         hit: function(shipIndex) {
             //called by board.recieve attack()
             if (this.position[shipIndex].hitStatus) {
-                // console.log("invalid hit");
                 return "invalid";
             } else {
-                // console.log("Hit!")
                 this.position[shipIndex].hitStatus = true;
-                // this.position[shipIndex].updateHitStatus(this.shipType);
                 return "hit";
             }
         },
@@ -64,7 +60,6 @@ function createShip(xIn,yIn,dirIn,lenIn,nameIn) {
             let hitOut = false;
             for (let i=0; i<this.position.length; i++) {
                 if (this.position[i].hitStatus) {
-                    console.log("Spot has been Hit!")
                     hitOut = true;
                 }
             }
@@ -74,18 +69,12 @@ function createShip(xIn,yIn,dirIn,lenIn,nameIn) {
 }
 
 
-
-
-
-
-
-
 // ~~~~~~~~~~~~~~~~~~~~~~~
 // BOARD FACTORY FUNCTION
 // ~~~~~~~~~~~~~~~~~~~~~~~
 function gameBoard() {
     return {
-        //Methods & properties from a ship
+
         shipsAll: [],
         hits: [],
         missesAll: [], //keep track to display on board
@@ -111,21 +100,18 @@ function gameBoard() {
             if (!hitFlag) {
                 for (let k=0; k<this.missesAll.length; k++) {
                     if (atkX === this.missesAll[k].posX && atkY === this.missesAll[k].posY){
-                        // console.log("invalid miss!");
                         attackResponse = "invalid";
                         missFlag = true;
                         break;
                     }
                 }
                 if ( atkX > 10 || atkX < 1 || atkY > 10 || atkY < 1) {
-                    console.log("Guess out of index");
                     attackResponse = "invalid";
                     missFlag = true;
                 }
             }
             //Checks for valid Miss (not selected)
             if (attackResponse.length < 1) {
-                // console.log("valid miss!");
                 this.missesAll.push({
                     posX: atkX,
                     posY: atkY,
@@ -137,10 +123,9 @@ function gameBoard() {
 
         placeShip: function(plIndex,xIndex,yIndex,currentDirection,shipLength,shipName) {
             let validCheck = gamePlay.checkLocationValid(plIndex,xIndex,yIndex,currentDirection,shipLength);
-            //DOUBLE CHECK WHY DO I VALID CHECK AGAIN??
             switch (validCheck) {
                 case "error":
-                    console.log("Cant place ship here");
+                    // console.log("Cant place ship here");
                     break;
                 case "valid":
                     let newShip = createShip(xIndex,yIndex,currentDirection,shipLength,shipName);
@@ -151,10 +136,7 @@ function gameBoard() {
         },
 
         autoPlaceShipsAll: function() {
-            // this.placeShip("co",1,1,"x",5,"Test Ship");
-            let count = 0;
             let directions = ["x","y"];
-            // while (count > 1) {
             while (this.shipsAll.length < 5) {
                 let xIndex = Math.floor((Math.random() * 10) + 1);
                 let yIndex = Math.floor((Math.random() * 10) + 1);
@@ -162,7 +144,6 @@ function gameBoard() {
                 let randDirection = directions[randDirInt];
                 let shipLength = gamePlay.shipSizes[this.shipsAll.length];
                 let shipName = gamePlay.shipNames[this.shipsAll.length];
-                // console.log("creating ship",shipName);
                 this.placeShip("co",xIndex,yIndex,randDirection,shipLength,shipName);
             }
         },
@@ -173,8 +154,6 @@ function gameBoard() {
                 if (this.shipsAll[i].isSunk())
                 sunkCount += 1;
             }
-            // console.log("Ships Sunk:", sunkCount);
-            // console.log(this.shipsAll);
             if (sunkCount === 5){
                 return true
             } else {
@@ -183,12 +162,6 @@ function gameBoard() {
         }
     }
 }
-
-
-
-
-
-
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~
@@ -240,7 +213,6 @@ function playerNew(name) {
                                 }
                                 guessY = hitFirst.posY;
                             }
-                            console.log("Axis Guess At:",guessX, guessY);
                         } else {
                             //if only one hit 
                             //check one of the 4 squares randomly, continues while invalud 
@@ -251,10 +223,8 @@ function playerNew(name) {
                                 guessY = hitFirst.posY + randFactor;
                                 guessX = hitFirst.posX;
                             }
-                            console.log("Educated Guess At:",guessX, guessY);
                         }
                         let attackResult = gamePlay.playersAll[1].board.recieveAttack(guessX,guessY);
-                        // attackStop = true;
                         if (attackResult === "hit" || attackResult === "miss") {
                             domInteract.addAttack(attackResult,guessX,guessY,"p1");
                             attackStop = true;
@@ -263,8 +233,7 @@ function playerNew(name) {
                     //if all hit are sunk
                         let randX = Math.floor((Math.random() * 10)+1);
                         let randY = Math.floor((Math.random() * 10)+1);
-                        let attackResult = gamePlay.playersAll[1].board.recieveAttack(randX,randY)
-                        console.log(`Random Computer attack result at x:${randX} y:${randY}`,attackResult);
+                        let attackResult = gamePlay.playersAll[1].board.recieveAttack(randX,randY);
                         if (attackResult === "hit" || attackResult === "miss")  {
                             if (attackResult === "hit") {
                                 let hitElement = document.getElementById(`p1-${randY}-${randX}`);
@@ -289,7 +258,6 @@ function playerNew(name) {
                 let yAtk = Number(attackIn[1]);
                 //if successful call next player turn 
                 let attackResult = gamePlay.playersAll[0].board.recieveAttack(xAtk,yAtk);
-                console.log("P1 attack resulted in:",attackResult);
                 if (attackResult === "hit" || attackResult === "miss")  {
                     domInteract.addAttack(attackResult,xAtk,yAtk,"co");
                     gamePlay.startTurn();
@@ -299,12 +267,6 @@ function playerNew(name) {
     }
 
 }
-
-
-
-
-
-
 
 
 // ~~~~~~~~~~~~~~~~~~~~~
@@ -346,25 +308,23 @@ const gamePlay = {
         }
     },
     startTurn: function() {
-        console.log(this.playersAll[0]);
-        console.log(this.playersAll[1]);
         //Switch turn every time
         this._switchTurn(); //logging turn each time called
         //Check for sinking & intialize vars
         let p1Sunk = this.playersAll[1].board.allSunk();
         let compSunk = this.playersAll[0].board.allSunk();
-        //NEED TO UPDATE DOM ON INDIVIDUAL SHIP SINKING
 
         if (p1Sunk || compSunk) { //if either player sunk end game
-            console.log("Game Over");
             if (compSunk) { //if p1 wins
-                console.log("Player 1 wins");
+                // console.log("Player 1 wins");
                 domInteract.uiTextUpdate(`${this.playersAll[1].name} Wins!`);
                 //end game with p1 as winner
             } else { //comp wins
-                console.log("Computer wins");
+                // console.log("Computer wins");
                 domInteract.uiTextUpdate(`Computer Wins!`);
             }
+            domInteract.domUiUpdate("player1-attack","stop");
+
         } else {
             if (this.turn === 1) {
                 //player 1 turn
@@ -385,7 +345,6 @@ const gamePlay = {
         } else {
             this.turn = 0;
         }
-        // console.log(this.turn);
     },
 
     toggleDirection: function() {
@@ -396,6 +355,7 @@ const gamePlay = {
         }
         domInteract.toggleDirectionDisplay();
     },
+
     checkLocationValid: function(plIndex,xIndex,yIndex,currentDirection,shipLength) {
         let errorMsg = document.getElementById("placing-error");
         if (currentDirection === "x" && (xIndex+shipLength-1) > 10) {
@@ -414,6 +374,7 @@ const gamePlay = {
             return "valid";
         }
     },
+    
     checkSpotTaken: function(plIndex,xIndex,yIndex,currentDirection,shipLength) {
         //uses classlist length of square to determine if a ship is already there
         let errorCheck = true;
@@ -433,15 +394,6 @@ const gamePlay = {
         return errorCheck;
     }
 }
-
-
-
-
-
-
-
-
-
 
 // ~~~~~~~~~~~~~~~~~~~~~
 // DOM INTERACT MODULE
@@ -467,6 +419,7 @@ const domInteract = {
             }
         }
     },
+    
     nameIn: function(e) {
         e.preventDefault();
         let formInput = document.querySelectorAll('input[type=text]')[0];
@@ -481,12 +434,12 @@ const domInteract = {
         formInput.parentElement.classList = "hidden";
         gamePlay.setUpGame(playerName);
     },
+
     domUiUpdate: function(reason,changeType) {
         //updates UI interaction including event listeners, buttons, 
         let caseIn = `${reason} ${changeType}`;
         switch (caseIn) {
             case "placing-ships start":
-                // console.log ("on");
                 //player 1 board squares
                 let playerSquaresStart = document.querySelectorAll("#player1-board .game-square");
                 playerSquaresStart.forEach(square => square.addEventListener("mouseover",domInteract.locationData));
@@ -506,13 +459,13 @@ const domInteract = {
                 dirToggleBtnStop.removeEventListener("click",gamePlay.toggleDirection);
                 break;
             case "player1-attack start":
-                console.log("player 1 attacking:");
+                // console.log("player 1 attacking:");
                 //add event listeners on attack
                 let attackSquaresStart = document.querySelectorAll("#comp-board .game-square");
                 attackSquaresStart.forEach(square => square.addEventListener("click",gamePlay.playersAll[1].attack));
                 break;
             case "player1-attack stop":
-                console.log("player 1 stop attacking:");
+                // console.log("player 1 stop attacking:");
                 //remove event listeners on attack
                 let attackSquaresStop = document.querySelectorAll("#comp-board .game-square");
                 attackSquaresStop.forEach(square => square.removeEventListener("click",gamePlay.playersAll[1].attack));
@@ -599,7 +552,6 @@ const domInteract = {
         //Display of square hit
         let attackSquare = document.getElementById(`${plIndex}-${yIn}-${xIn}`);
         attackSquare.classList.add(attackResult);
-        // console.log(attackSquare.classList);
         //HP Display of ship if hit
         if (attackResult === "hit") {
             let playerIndexNum = 1;
@@ -610,18 +562,13 @@ const domInteract = {
             let selectedShip = gamePlay.playersAll[playerIndexNum].board.shipsAll.filter(ship => {
                 return ship.shipType === shipName;
             })
-            // console.log(selectedShip[0].position.length);
             let selectedShipIndex = 0;
             for (let i=0; i<selectedShip[0].position.length; i++) {
-                // console.log(selectedShip[0].position[i])
                 if (selectedShip[0].position[i].hitStatus) {
                     selectedShipIndex++;
                 }
             }
-            // console.log(`${shipName}-${plIndex}-hp-0${selectedShipIndex}`);
-
             let hpDivUpdating = document.getElementById(`${shipName}-${plIndex}-hp-0${selectedShipIndex}`);
-            // console.log(hpDivUpdating);
             hpDivUpdating.classList.add("hit");
         }
     },
@@ -643,29 +590,6 @@ const domInteract = {
 }
 
 gamePlay.init();
-
-
-
-
-
-
-//Debugging Cases
-
-// let testBoard = gameBoard();
-// testBoard.placeShip(5,"3,2","y");
-// console.log(testBoard.recieveAttack(4,2));
-// console.log(testBoard.recieveAttack(4,2));
-
-// let player1 = playerNew("Steve");
-// player1.board.placeShip(10,"1,1","x");
-// console.log(player1);
-// let playerComp = playerNew("computer");
-// playerComp.attack(player1);
-
-
-// // Testing Exports
-// module.exports = {createShip, gameBoard, playerNew};
-
 
 
 

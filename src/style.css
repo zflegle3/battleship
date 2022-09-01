@@ -1,4 +1,4 @@
-/* CSS Reset http://meyerweb.com/eric/tools/css/reset */
+/* CSS Reset via http://meyerweb.com/eric/tools/css/reset */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -16,7 +16,6 @@ time, mark, audio, video {
 	padding: 0;
 	border: 0;
 	font-size: 10px;
-	font: inherit;
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -43,7 +42,7 @@ table {
 	border-spacing: 0;
 }
 
-/* General Document Styles */
+
 /* Main Styled Font */
 @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
 /* font-family: 'Kdam Thmor Pro', sans-serif; */
@@ -51,36 +50,30 @@ table {
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
 /* font-family: 'Montserrat', sans-serif; */
 
+
+/* General Document Styles */
 * {
---display-width: 25rem;
---piece-hp-width: 0.8rem;
+    --display-width: 35rem;
+    --piece-hp-width: 0.8rem;
 
---light-blue1: #A5D8FF;
---light-blue2: #14FFF7;
---dark-blue1: #0081A7;
---dark-blue2: #0BC9CD;
---dark-blue3: #1D8A99;
---dark-blue4: #577590;
---grey-ship1: #7C7C7C;
---grey-ship2: #B2B2B2;
---grey-ship3: #C3BABA;
---green-good1: #7DCD85;
---green-good2: #C9F299;
+    /* --light-blue1: #A5D8FF; */
+    --light-blue2: #14FFF7; 
+    /* --dark-blue1: #0081A7; */
+    --dark-blue2: #0BC9CD;
+    --dark-blue3: #1D8A99;
+    /* --dark-blue4: #577590; */
+    --grey-ship1: #7C7C7C;
+    /* --grey-ship2: #B2B2B2; */
+    --grey-ship3: #C3BABA;
+    --green-good1: #7DCD85;
+    --green-good2: #C9F299;
 
---green-radar1: #ADE25D;
---green-radar2: #99C24D;
---green-radar3: #5CF64A;
+    --red-bad1: #A71D31;
+    --red-bad2: #f29999;
+    --orange1: #F7B267;
+    --orange2: #F79D65;
 
---sand1: #FCDEBE;
---sand2: #F3DE8A;
-
---red-bad1: #A71D31;
---red-bad2: #f29999;
---orange1: #F7B267;
---orange2: #F79D65;
---orange3: #F4845F;
-
-font-size: 10px;
+    font-size: 10px;
 }
 
 body {
@@ -129,7 +122,7 @@ Header Document Styles
 ~~~~~~~~~~~~~~~~~~~~~ */
 
 #comms h1 {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     padding: 1rem;
     margin: 1rem;
     border: 0.1rem solid var(--grey-ship1);
@@ -149,7 +142,7 @@ Header Document Styles
 
 #player-in input {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
+    font-size: 1.5rem;
     padding: 0.3rem;
     margin-bottom: 1rem;
     text-align: center;
@@ -159,7 +152,7 @@ Header Document Styles
 
 #player-in button {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
+    font-size: 1.5rem;
     padding: 0.3rem 0.5rem 0.3rem 0.5rem;
     margin-bottom: 1rem;
     border: 1px solid var(--grey-ship1);
@@ -175,11 +168,10 @@ Header Document Styles
 }
 
 #ui-output {
-
 }
 
 #ui-output-text {
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-family: 'Montserrat', sans-serif;
     margin-bottom: 1rem;
 }
@@ -211,7 +203,7 @@ Header Document Styles
 
 #placing-error {
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.75rem;
+    font-size: 1.2rem;
     color: var(--red-bad1);
 }
 
@@ -240,7 +232,6 @@ Header Document Styles
 }
 
 .game-square {
-    /* border: 1px solid var(--green-radar3); */
     background-color: var(--light-blue2);
     /* background-color: rgb(0,0,0); */
 }
@@ -335,33 +326,3 @@ div[id*="pieces"] > div > p {
     font-size: var(--piece-hp-width);
     font-family: 'Montserrat', sans-serif;
 }
-
-
-
-
-
-
-/* Mock Styles
-#carrier-p1-hp-03, #carrier-p1-hp-04, #carrier-p1-hp-05 {
-    background-color: var(--red-bad1);
-}
-
-#cruiser-co-hp-03 {
-    background-color: var(--red-bad1);
-} */
-
-/* #co-4-3, #co-5-2, #co-6-2, #co-7-2, #co-7-3, #co-7-4, #co-6-5, #co-5-5, #co-4-4, #co-5-3{
-    background-color: var(--sand2);
-}
-
-#co-6-3, #co-6-4, #co-5-4{
-    background-color: var(--green-radar2);
-}
-
-#co-9-2, #co-9-3, #co-9-4, #co-9-4, #co-2-2, #co-3-2, #co-3-5, #co-3-6, #co-3-7, #co-3-8{
-    background-color: var(--grey-ship1);
-}
-
-#co-9-4 {
-    background-color: var(--red-bad2);
-} */
