@@ -5,11 +5,11 @@
 ## Summary
 
 This project was built as part of The Odin Project JavaScript curriculum in order to practice
-Test Driven Development(TDD) using Jest. The application, built with JavaScript, HTML, CSS, npm, jest and Webpack.
+Test Driven Development(TDD) using Jest. The application, built with JavaScript, HTML, CSS, Npm, Jest and Webpack.
 
 ## Features
 * Battleship gameplay with intuitive UI
-* AI Player that plays with similar strategy of human a player
+* AI Opponent Player that plays with similar strategy of human a player
 
 ## Gameplay
 1. Enter player name and click "Start Game" button to start.
