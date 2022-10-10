@@ -1,4 +1,4 @@
-# Battleship
+# Battleship Game vs. Compurer AI
 
 [Live Demo Here!](https://zflegle3.github.io/battleship/)
 
