@@ -1,4 +1,4 @@
-# Battleship Game vs. Compurer AI
+# Battleship Game vs. Computer AI
 
 [Live Demo Here!](https://zflegle3.github.io/battleship/)
 
